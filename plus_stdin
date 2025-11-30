@@ -1,12 +1,30 @@
 #!/usr/bin/python3
 # SPDX-FileCopyrightText: 2025 daigo murata <付けたければメールアドレス>
 import sys
-   
-ans = 0
+import re
+
+total = 0
+
+print("Enter expressions (e.g., 1+2, 3 * 4). Press Ctrl+D to finish.", file=sys.stderr)
+
 for line in sys.stdin:
+    original = line.strip()
+
+    if not original:
+        continue
+
+    expr = original.replace(" ", "")
+
+    if not re.fullmatch(r"[0-9+\-*/.]+", expr):
+        print(f"[Invalid] Skipped: '{original}'", file=sys.stderr)
+        continue
+
     try:
-        ans += int(line)
-    except:　
-        ans += float(line)    
-     
-print(ans)
+        value = eval(expr)
+        print(f"[OK] {original} → {value}", file=sys.stderr)
+        total += value
+    except Exception:
+        print(f"[Error] Could not evaluate: '{original}'", file=sys.stderr)
+
+print(total)
+
